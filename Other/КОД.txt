@@ -1,0 +1,146 @@
+using System;
+using System.Linq;
+using System.Windows;
+using System.Collections.Generic;
+using System.Windows.Media.Imaging;
+using CarWashApp.Entities;
+using CarWashApp.UserControls;
+using CarWashApp.Windows.Dialogs;
+
+namespace CarWashApp
+{
+    /// <summary>
+    /// Логика взаимодействия для MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        public List<Client> SelectedClients { get; private set; } = CarWashAppEntities.Instance.Client.ToList();
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            InitializeListeners();
+            UpdateClientsList();
+        }
+
+        #region Область: Методы.
+
+        private void InitializeListeners()
+        {
+            ClientsList.SelectionChanged += SelectionParametersChanged;
+        }
+
+        private void SelectionParametersChanged(Object sender, dynamic e)
+        {
+            Client selectedClient = (ClientsList.SelectedItem as ClientsListItem).CurrentClient;
+
+            if (selectedClient != null)
+            {
+                CarTypeImage.Source = new BitmapImage(new Uri($"/Resources/{selectedClient.CarType.Image}", UriKind.Relative));
+                CarType.Text = selectedClient.CarType.CarTypeName;
+                CarStateNumber.Text = selectedClient.CarStateNumber;
+                ClientFullName.Text = selectedClient.ClientFullName;
+                ClientPhoneNumber.Text = selectedClient.PhoneNumber;
+            }
+        }
+
+        private void UpdateClientsList() 
+        {
+            ClientsList.Items.Clear();
+
+            foreach (Client client in SelectedClients)
+            {
+                ClientsListItem item = new ClientsListItem(client);
+
+                item.ClientEdit.Click += UserControlContextMenuButtonClick;
+                item.ClientRemove.Click += UserControlContextMenuButtonClick;
+
+                GetOptimalWidth(item);
+                ClientsList.Items.Add(item);
+            }
+        }
+
+        private void GetOptimalWidth(ClientsListItem item)
+        {
+            try
+            {
+                item.Width = ClientsList.ActualWidth - 14;
+            }
+            catch
+            {
+                item.Width = ClientsList.Width;
+            }
+        }
+
+        #endregion
+
+        #region Область: События.
+        private void ClientMenuButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Добавление через кнопку
+            if (sender == ClientAddButton)
+            {
+                ClientAddingWindow window = new ClientAddingWindow();
+
+                foreach (var item in CarWashAppEntities.Instance.CarType.ToList())
+                {
+                    window.CarTypeComboBox.Items.Add(item.CarTypeName);
+                }
+
+                window.ShowDialog();
+
+                if (window.IsPressed)
+                {
+                    CarWashAppEntities.Instance.Client.Add(new Client
+                    {
+                        CarStateNumber = window.CarStateNumberTextBox.Text,
+                        CarTypeID = window.CarTypeComboBox.SelectedIndex + 1,
+                        ClientFullName = window.ClientFullNameTextBox.Text,
+                        PhoneNumber = window.ClientPhoneNumberTextBox.Text
+                    });
+
+                    CarWashAppEntities.Instance.SaveChanges();
+                    UpdateClientsList();
+                }
+            }
+
+            // Удаление через кнопку
+            if (sender == ClientRemoveButton)
+            {
+                if (ClientsList.SelectedItem != null)
+                {
+                    Client selected = (ClientsList.SelectedItem as ClientsListItem).CurrentClient;
+                    CarWashAppEntities.Instance.Client.Remove(selected);
+
+                    CarWashAppEntities.Instance.SaveChanges();
+                    UpdateClientsList();   
+                }
+            }
+        }
+
+        private void EmployeMenuButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ServicesMenuButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void UserControlContextMenuButtonClick (object sender, dynamic e)
+        {
+
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            foreach (ClientsListItem item in ClientsList.Items)
+            {
+                GetOptimalWidth(item);
+            }
+        }
+
+        #endregion
+    }
+}

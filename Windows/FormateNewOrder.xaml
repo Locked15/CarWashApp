@@ -1,0 +1,142 @@
+﻿<Window x:Class="CarWashApp.Windows.FormateNewOrder"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CarWashApp.Windows"
+        mc:Ignorable="d"
+        Title="Формирование заказа - ООО 'Формула'" 
+        Background="#0a242b" 
+        Height="450" Width="400"
+        MinHeight="450" MinWidth="400"
+        Loaded="Window_Loaded">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150*"/>
+            <RowDefinition Height="300*"/>
+            <RowDefinition Height="75*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="40*"/>
+                <RowDefinition Height="30*"/>
+                <RowDefinition Height="40*"/>
+                <RowDefinition Height="30*"/>
+                <RowDefinition Height="40*"/>
+                <RowDefinition Height="30*"/>
+                <RowDefinition Height="40*"/>
+                <RowDefinition Height="5*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="15*"/>
+                <ColumnDefinition Width="100*"/>
+                <ColumnDefinition Width="180*"/>
+                <ColumnDefinition Width="15*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="Клиент:" Foreground="#8fb9c4"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="Сотрудник:" Foreground="#8fb9c4"/>
+            <TextBlock Grid.Row="5" Grid.Column="1" Text="Адрес:" Foreground="#8fb9c4"/>
+            <TextBlock Grid.Row="7" Grid.Column="1" Text="Стоимость:" Foreground="#8fb9c4"/>
+
+            <ComboBox Name="ClientSelector" Grid.Row="1" Grid.Column="2" Style="{DynamicResource MyComboBoxStyle}" DisplayMemberPath="ClientFullName"
+                      SelectedItem="{Binding Path=Client}" SelectionChanged="ClientSelector_SelectionChanged"/>
+            <ComboBox Name="EmployeeSelector" Grid.Row="3" Grid.Column="2" Style="{DynamicResource MyComboBoxStyle}" DisplayMemberPath="FullName_Bind"
+                      SelectedItem="{Binding Path=Employe}"/>
+            
+            <TextBox Name="AddressInput" Grid.Row="5" Grid.Column="2" Text="{Binding Path=Address}" Foreground="#8fb9c4"/>
+            <TextBlock Name="OrderPrice" Grid.Row="7" Grid.Column="2" Text="{Binding StringFormat='0.00'}" Foreground="#8fb9c4"/>
+        </Grid>
+
+        <GroupBox Grid.Row="1" Header="Услуги" BorderThickness="1" BorderBrush="#8fb9c4" Foreground="#8fb9c4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20*"/>
+                    <ColumnDefinition Width="140*"/>
+                    <ColumnDefinition Width="70*"/>
+                    <ColumnDefinition Width="140*"/>
+                    <ColumnDefinition Width="20*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="220*"/>
+                    <RowDefinition Height="10*"/>
+                </Grid.RowDefinitions>
+
+                <ListView Name="AllServices" Grid.Row="1" Grid.Column="1" Background="#0a242b" BorderBrush="Black" BorderThickness="2" DisplayMemberPath="Title"
+                          Foreground="#8fb9c4"/>
+                <ListView Name="SelectedServices" Grid.Row="1" Grid.Column="3" Background="#0a242b" BorderBrush="Black" BorderThickness="2" DisplayMemberPath="Title"
+                          Foreground="#8fb9c4"/>
+
+                <Grid Grid.Row="1" Grid.Column="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="15*"/>
+                        <ColumnDefinition Width="50*"/>
+                        <ColumnDefinition Width="15*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="70*"/>
+                        <RowDefinition Height="30*"/>
+                        <RowDefinition Height="50*"/>
+                        <RowDefinition Height="30*"/>
+                        <RowDefinition Height="70*"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Name="RemoveServiceFromOrderButton" Grid.Row="1" Grid.Column="1" Content="&#8592;" Click="RemoveServiceFromOrderButton_Click" >
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button Name="AddServiceToOrderButton" Grid.Row="3" Grid.Column="1" Content="&#8594;" Click="AddServiceToOrderButton_Click" >
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </Grid>
+            </Grid>
+        </GroupBox>
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="25*"/>
+                <RowDefinition Height="5*"/>
+            </Grid.RowDefinitions>
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="5*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Name="SaveOrderButton" Grid.Row="1" Grid.Column="1" Click="SaveOrderButton_Click" Content="Сохранить заказ">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="20"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+
+            <Button Name="GenerateDocumentButton" Grid.Row="1" Grid.Column="3" Click="GenerateDocumentButton_Click" Content="Создать чек">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="20"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </Grid>
+    </Grid>
+</Window>
